@@ -38,8 +38,9 @@ npm install
 
 cp .env.example .env
 php artisan key:generate
-Database Configuration
  ```
+Database Configuration
+
 4. Open .env and update the DB_DATABASE, DB_USERNAME, and DB_PASSWORD to match your local MySQL settings.
 
 5. Run Migrations & Seeders
