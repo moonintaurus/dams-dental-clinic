@@ -21,10 +21,10 @@ Before running this project, ensure you have the following installed:
 ## Installation Steps
 
 1. **Clone the Repository**
-   ```bash
-   git clone <your-repository-link>
-   cd <project-folder-name>
-    ```
+```bash
+git clone <your-repository-link>
+cd <project-folder-name>
+```
 2. Install Dependencies
 
  ```bash
@@ -50,8 +50,8 @@ Database Configuration
 php artisan migrate --seed
  ```
 6. Compile Assets
- ```
- ```Bash
+   
+ ```bash
 
 npm run dev
  ```
