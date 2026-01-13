@@ -24,35 +24,40 @@ Before running this project, ensure you have the following installed:
    ```bash
    git clone <your-repository-link>
    cd <project-folder-name>
-Install Dependencies
+    ```
+2. Install Dependencies
 
-Bash
+ ```bash
 
 composer install
 npm install
-Environment Setup Copy the example environment file and generate a unique app key:
+ ```
+3. Environment Setup Copy the example environment file and generate a unique app key:
 
-Bash
+ ```bash
 
 cp .env.example .env
 php artisan key:generate
 Database Configuration
+ ```
+4. Open .env and update the DB_DATABASE, DB_USERNAME, and DB_PASSWORD to match your local MySQL settings.
 
-Open .env and update the DB_DATABASE, DB_USERNAME, and DB_PASSWORD to match your local MySQL settings.
+5. Run Migrations & Seeders
 
-Run Migrations & Seeders
-
-Bash
+ ```Bash
 
 php artisan migrate --seed
-Compile Assets
-
-Bash
+ ```
+6. Compile Assets
+ ```
+ ```Bash
 
 npm run dev
-Start the Server
+ ```
+7. Start the Server
 
-Bash
+ ```Bash
 
 php artisan serve
+ ```
 The application will be available at http://127.0.0.1:8000.
