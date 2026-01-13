@@ -8,17 +8,23 @@ use App\Models\Service;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\AppointmentConfirmed;
+use App\Notifications\AppointmentCompleted;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class AppointmentController extends Controller
 {
     public function index()
     {
+        // For Patients: Show only their own appointments
         if (Auth::user()->isPatient()) {
             $appointments = Appointment::where('user_id', Auth::id())
                 ->with(['dentist', 'service'])
                 ->orderBy('appointment_date', 'desc')
                 ->paginate(10);
-        } else {
+        } 
+        // For Admins/Dentists: Show all appointments and include 'user' for the Medical Modal
+        else {
             $appointments = Appointment::with(['user', 'dentist', 'service'])
                 ->orderBy('appointment_date', 'desc')
                 ->paginate(20);
@@ -61,25 +67,9 @@ class AppointmentController extends Controller
 
     public function show(Appointment $appointment)
     {
+        // Load relationships to ensure 'View' page has all info
+        $appointment->load(['user', 'dentist', 'service', 'medicalRecord']);
         return view('appointments.show', compact('appointment'));
-    }
-
-    public function edit(Appointment $appointment)
-    {
-        //
-    }
-
-    public function update(Request $request, Appointment $appointment)
-    {
-        //
-    }
-
-    public function destroy(Appointment $appointment)
-    {
-        $appointment->update(['status' => 'cancelled']);
-
-        return redirect()->route('appointments.index')
-            ->with('success', 'Appointment cancelled successfully.');
     }
 
     public function updateStatus(Request $request, Appointment $appointment)
@@ -90,13 +80,32 @@ class AppointmentController extends Controller
 
         $appointment->update($validated);
 
+        // Create database notification record
         Notification::create([
             'user_id' => $appointment->user_id,
             'type' => 'appointment_status',
             'message' => "Your appointment status has been updated to: {$validated['status']}"
         ]);
 
-        return back()->with('success', 'Appointment status updated successfully.');
+        // Email notifications based on status
+        if ($validated['status'] === 'confirmed') {
+            $appointment->user->notify(new AppointmentConfirmed($appointment));
+        }
+
+        if ($validated['status'] === 'completed') {
+            $appointment->user->notify(new AppointmentCompleted($appointment));
+        }
+
+        return back()->with('success', 'Status updated. You can now add a medical record if completed.');
+    }
+
+    public function destroy(Appointment $appointment)
+    {
+        // Logic for soft-cancelling an appointment
+        $appointment->update(['status' => 'cancelled']);
+
+        return redirect()->route('appointments.index')
+            ->with('success', 'Appointment cancelled successfully.');
     }
 
     public function getAvailableSlots(Request $request)

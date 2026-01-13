@@ -10,12 +10,14 @@ class ServiceController extends Controller
 {
     public function index()
     {
+        // Fetches services with pagination to match your UI table
         $services = Service::paginate(10);
         return view('admin.services.index', compact('services'));
     }
 
     public function create()
     {
+        // Returns the creation form view
         return view('admin.services.create');
     }
 
@@ -25,7 +27,7 @@ class ServiceController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'duration' => 'required|integer|min:15'
+            'duration' => 'required|integer|min:15' // Minimum 15 minutes for any dental procedure
         ]);
 
         Service::create($validated);
@@ -36,11 +38,13 @@ class ServiceController extends Controller
 
     public function show(Service $service)
     {
-        //
+        // Currently empty, but can be used to show treatment-specific details
+        return view('admin.services.show', compact('service'));
     }
 
     public function edit(Service $service)
     {
+        // Returns the edit form with the existing service data
         return view('admin.services.edit', compact('service'));
     }
 

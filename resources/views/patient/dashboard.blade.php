@@ -10,13 +10,12 @@
             </a>
         </div>
 
-        <!-- Welcome Card -->
         <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-8 mb-8 text-white">
             <h2 class="text-2xl font-bold mb-2">Welcome back, {{ auth()->user()->name }}!</h2>
             <p class="text-blue-100">Manage your appointments and view your dental history</p>
         </div>
 
-        <!-- Upcoming Appointments -->
+        {{-- Upcoming Appointments Section --}}
         <div class="bg-white rounded-lg shadow mb-8">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h2 class="text-xl font-bold text-gray-900">Upcoming Appointments</h2>
@@ -54,30 +53,9 @@
                                     <p class="text-gray-700 mb-1">
                                         <span class="font-semibold">Dentist:</span> {{ $appointment->dentist->name }}
                                     </p>
-                                    <p class="text-gray-600 text-sm">
-                                        <span class="font-semibold">Duration:</span> {{ $appointment->service->duration }} minutes
-                                    </p>
-                                    @if($appointment->notes)
-                                    <p class="text-gray-600 text-sm mt-2">
-                                        <span class="font-semibold">Notes:</span> {{ $appointment->notes }}
-                                    </p>
-                                    @endif
                                 </div>
                                 <div class="flex space-x-2">
-                                    <a href="{{ route('appointments.show', $appointment) }}" 
-                                       class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                        View Details
-                                    </a>
-                                    @if($appointment->status === 'pending' || $appointment->status === 'confirmed')
-                                    <form method="POST" action="{{ route('appointments.destroy', $appointment) }}" 
-                                          onsubmit="return confirm('Are you sure you want to cancel this appointment?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">
-                                            Cancel
-                                        </button>
-                                    </form>
-                                    @endif
+                                    <a href="{{ route('appointments.show', $appointment) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View Details</a>
                                 </div>
                             </div>
                         </div>
@@ -85,29 +63,59 @@
                     </div>
                 @else
                     <div class="text-center py-12">
-                        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
                         <p class="text-gray-500 mb-4">You don't have any upcoming appointments</p>
-                        <a href="{{ route('appointments.create') }}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                            Book Your First Appointment
-                        </a>
                     </div>
                 @endif
             </div>
         </div>
 
-        <!-- Quick Actions -->
+        {{-- NEW: Recent Medical Records Quick View --}}
+        <div class="bg-white rounded-lg shadow mb-8 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-900">Recent Treatment History</h2>
+                <a href="{{ route('medical-records.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All Records</a>
+            </div>
+            <div class="p-0">
+                @if(isset($medicalRecords) && $medicalRecords->count() > 0)
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diagnosis</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Treatment</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($medicalRecords->take(3) as $record)
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ $record->created_at->format('M d, Y') }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900 font-medium">
+                                    {{ $record->diagnosis }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    {{ $record->treatment }}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class="text-center py-12">
+                        <p class="text-gray-500">No medical records available yet.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Quick Links Grid --}}
         <div class="grid md:grid-cols-3 gap-6">
             <a href="{{ route('appointments.index') }}" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
                 <div class="flex items-center space-x-4">
-                    <div class="bg-blue-100 p-3 rounded-lg">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
-                    </div>
+                    <div class="bg-blue-100 p-3 rounded-lg"><svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
                     <div>
-                        <h3 class="font-bold text-gray-900">All Appointments</h3>
+                        <h3 class="font-bold text-gray-900">History</h3>
                         <p class="text-sm text-gray-600">View appointment history</p>
                     </div>
                 </div>
@@ -115,31 +123,23 @@
 
             <a href="{{ route('profile.edit') }}" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
                 <div class="flex items-center space-x-4">
-                    <div class="bg-green-100 p-3 rounded-lg">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                    </div>
+                    <div class="bg-green-100 p-3 rounded-lg"><svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div>
                     <div>
-                        <h3 class="font-bold text-gray-900">My Profile</h3>
+                        <h3 class="font-bold text-gray-900">Profile</h3>
                         <p class="text-sm text-gray-600">Update personal information</p>
                     </div>
                 </div>
             </a>
 
-            <div class="bg-white rounded-lg shadow p-6">
+            <a href="{{ route('medical-records.index') }}" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
                 <div class="flex items-center space-x-4">
-                    <div class="bg-purple-100 p-3 rounded-lg">
-                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                    </div>
+                    <div class="bg-purple-100 p-3 rounded-lg"><svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
                     <div>
-                        <h3 class="font-bold text-gray-900">Medical Records</h3>
-                        <p class="text-sm text-gray-600">View treatment history</p>
+                        <h3 class="font-bold text-gray-900">Full Records</h3>
+                        <p class="text-sm text-gray-600">View detailed history</p>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </div>

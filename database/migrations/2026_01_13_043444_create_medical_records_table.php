@@ -10,8 +10,15 @@ return new class extends Migration
     {
         Schema::create('medical_records', function (Blueprint $table) {
             $table->id();
+            // The patient/student the record belongs to
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            
+            // The dentist who provided the treatment
+            $table->foreignId('dentist_id')->nullable()->constrained('users')->onDelete('set null');
+            
+            // Link to the specific appointment if applicable
             $table->foreignId('appointment_id')->nullable()->constrained()->onDelete('set null');
+            
             $table->text('diagnosis')->nullable();
             $table->text('treatment')->nullable();
             $table->text('prescription')->nullable();

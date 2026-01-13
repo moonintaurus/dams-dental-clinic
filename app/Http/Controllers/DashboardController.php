@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Service;
+use App\Models\MedicalRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,6 +46,7 @@ class DashboardController extends Controller
 
     private function patientDashboard()
     {
+        // Fetch upcoming appointments
         $upcomingAppointments = Appointment::where('user_id', Auth::id())
             ->where('appointment_date', '>=', today())
             ->where('status', '!=', 'cancelled')
@@ -53,6 +55,11 @@ class DashboardController extends Controller
             ->orderBy('appointment_time')
             ->get();
 
-        return view('patient.dashboard', compact('upcomingAppointments'));
+        // NEW: Fetch medical records for the new dashboard section
+        $medicalRecords = MedicalRecord::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('patient.dashboard', compact('upcomingAppointments', 'medicalRecords'));
     }
 }

@@ -4,7 +4,7 @@
 <div class="py-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-900">My Appointments</h1>
+            <h1 class="text-3xl font-bold text-gray-900">Appointment Management</h1>
             <a href="{{ route('appointments.create') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
                 Book New Appointment
             </a>
@@ -15,6 +15,7 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patient</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dentist</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
@@ -25,6 +26,9 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($appointments as $appointment)
                         <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ $appointment->user->name }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     {{ $appointment->appointment_date->format('M j, Y') }}
@@ -51,6 +55,15 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <a href="{{ route('appointments.show', $appointment) }}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                                
+                                {{-- RESTRICTED: Only Admins can see the button to add medical records --}}
+                                @if(auth()->user()->isAdmin() && $appointment->status === 'completed')
+                                    <button onclick="openMedicalModal({{ $appointment->id }}, {{ $appointment->user_id }}, '{{ $appointment->user->name }}')" 
+                                            class="text-purple-600 hover:text-purple-900 mr-3">
+                                        + Add Medical Record
+                                    </button>
+                                @endif
+
                                 @if($appointment->status === 'pending' || $appointment->status === 'confirmed')
                                 <form method="POST" action="{{ route('appointments.destroy', $appointment) }}" class="inline">
                                     @csrf
@@ -70,10 +83,62 @@
             @else
                 <div class="text-center py-12">
                     <p class="text-gray-500 mb-4">No appointments found</p>
-                    <a href="{{ route('appointments.create') }}" class="text-blue-600 hover:text-blue-800">Book your first appointment</a>
                 </div>
             @endif
         </div>
     </div>
 </div>
+
+{{-- MODAL SECTION: Only rendered for Admins for extra security --}}
+@if(auth()->user()->isAdmin())
+<div id="medicalModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-900">Medical Record: <span id="patientName" class="text-blue-600"></span></h3>
+            <button onclick="closeMedicalModal()" class="text-gray-400 hover:text-gray-600">&times;</button>
+        </div>
+        
+        <form action="{{ route('admin.medical-records.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="appointment_id" id="modal_appointment_id">
+            <input type="hidden" name="user_id" id="modal_user_id">
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Diagnosis</label>
+                <textarea name="diagnosis" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g. Impacted Third Molar" required></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Treatment Done</label>
+                <input type="text" name="treatment" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g. Tooth Extraction" required>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Prescription / Notes (Optional)</label>
+                <textarea name="prescription" rows="2" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g. Mefenamic Acid 500mg"></textarea>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="closeMedicalModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition shadow-md">Save Medical Record</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openMedicalModal(appointmentId, userId, name) {
+    document.getElementById('modal_appointment_id').value = appointmentId;
+    document.getElementById('modal_user_id').value = userId;
+    document.getElementById('patientName').innerText = name;
+    document.getElementById('medicalModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMedicalModal() {
+    document.getElementById('medicalModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+</script>
+@endif
 @endsection
