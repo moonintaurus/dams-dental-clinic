@@ -77,7 +77,6 @@ Note: If you are using Gmail, you cannot use your standard login password. You m
 Example Configuration (for Gmail):
 
 ```bash
-Ini, TOML
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
