@@ -1,64 +1,94 @@
-# DAMS Dental Clinic Management System
+DAMS Dental Clinic Management System
 
-DAMS Dental is a web-based platform designed to manage dental appointments and patient medical records. 
-It features a student-centric dashboard for patients and a comprehensive management portal for administrators.
+DAMS Dental is a web-based platform designed to manage dental appointments and patient medical records. It features a student-centric dashboard for patients and a comprehensive management portal for administrators.
 
-## Features
-- **Patient Dashboard**: View upcoming appointments and full medical history.
-- **Appointment System**: Book, cancel, and track dental services.
-- **Medical Records**: Admins can securely add, edit, and delete patient diagnoses and treatments.
-- **Role-Based Access**: Specialized views and permissions for Patients and Admins.
+Features
+Patient Dashboard: View upcoming appointments and full medical history.
 
----
+Appointment System: Book, cancel, and track dental services.
 
-## Prerequisites
-Before running this project, ensure you have the following installed:
-- **PHP 8.2 or higher**
-- **Composer**
-- **MySQL**
-- **Node.js & NPM**
+Medical Records: Admins can securely add, edit, and delete patient diagnoses and treatments.
 
-## Installation Steps
+Role-Based Access: Specialized views and permissions for Patients and Admins.
 
-1. **Clone the Repository**
-```bash
-git clone <your-repository-link>
-cd <project-folder-name>
-```
+Prerequisites
+
+To run this project easily, we recommend using Laragon, which bundles the necessary tools (PHP, MySQL, Web Server).
+
+Laragon
+
+Node.js & NPM (Usually included in Laragon, but ensure you have a recent version installed)
+
+
+
+Installation Steps (Using Laragon)
+
+1. Prepare the Environment
+Open Laragon.
+
+Click Start All to initialize the Apache/Nginx server and MySQL database.
+
+Click on the Terminal button in Laragon to open the command line.
+
+
+
 2. Install Dependencies
+Enter the project folder and install the backend and frontend dependencies.
 
- ```bash
-
+cd <project-folder-name>
 composer install
 npm install
- ```
-3. Environment Setup Copy the example environment file and generate a unique app key:
 
- ```bash
+3. Environment Setup
+Copy the example environment file and generate a unique app key.
 
 cp .env.example .env
 php artisan key:generate
- ```
-Database Configuration
 
-4. Open .env and update the DB_DATABASE, DB_USERNAME, and DB_PASSWORD to match your local MySQL settings.
+5. Database Configuration
+Open Laragon and click the Database button to open HeidiSQL (or your preferred manager).
 
-5. Run Migrations & Seeders
+Create a new empty database (e.g., named dams_db).
 
- ```Bash
+Open the .env file in your project code and update the database settings to match:
+
+Code snippet
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=dams_db
+DB_USERNAME=root
+DB_PASSWORD=       # Leave empty if using default Laragon settings
+
+4. Run Migrations & Seeders
+Populate the database with the necessary tables and test data.
 
 php artisan migrate --seed
- ```
-6. Compile Assets
-   
- ```bash
+
+
+5. Compile Assets
+Build the frontend assets (CSS/JS).
 
 npm run dev
- ```
-7. Start the Server
 
- ```Bash
+
+6. Start the Queue Worker
+
+This application uses a queue system for background tasks (e.g., sending appointment emails, processing notifications). You must keep a worker running to process these tasks.
+
+Open a separate Laragon Terminal tab (Menu > Tools > Terminal) and run:
+
+php artisan queue:work
+
+Important: Keep this terminal window open while using the application. If you close it, emails and background updates will not process.
+
+7. How to Access the Application
 
 php artisan serve
- ```
+
+
 The application will be available at http://127.0.0.1:8000.
+
+Ensure Laragon is running ("Start All") and the queue:work terminal is active.
+127.0.0.1
