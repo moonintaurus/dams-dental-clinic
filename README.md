@@ -62,20 +62,45 @@ DB_DATABASE=dams_db
 DB_USERNAME=root
 DB_PASSWORD=       # Leave empty if using default Laragon settings
 ```
-## 5. Run Migrations & Seeders
+
+## 5. Email Configuration (Crucial for Notifications)
+To allow the system to send appointment emails, you must configure the SMTP settings in your .env file.
+
+Open the .env file.
+
+Locate the MAIL_ variables.
+
+Update them with your email provider's credentials.
+
+Note: If you are using Gmail, you cannot use your standard login password. You must enable 2-Step Verification on your Google Account and generate an App Password.
+
+Example Configuration (for Gmail):
+
+```bash
+Ini, TOML
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email-address@gmail.com
+MAIL_PASSWORD=your-16-digit-app-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="no-reply@dams-dental.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+## 6. Run Migrations & Seeders
 Populate the database with the necessary tables and test data.
 ```bash
 php artisan migrate --seed
 ```
 
-## 6. Compile Assets
+## 7. Compile Assets
 Build the frontend assets (CSS/JS).
 ```
 npm run dev
 
 ```
 
-## 7. Start the Queue Worker
+## 8. Start the Queue Worker
 
 This application uses a queue system for background tasks (e.g., sending appointment emails, processing notifications). You must keep a worker running to process these tasks.
 
@@ -85,7 +110,7 @@ php artisan queue:work
 ```
 Important: Keep this terminal window open while using the application. If you close it, emails and background updates will not process.
 
-## 8. How to Access the Application
+## 9. How to Access the Application
 ```
 php artisan serve
 ```
