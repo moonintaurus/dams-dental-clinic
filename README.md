@@ -1,21 +1,19 @@
-DAMS Dental Clinic Management System
+## DAMS Dental Clinic Management System
 
 DAMS Dental is a web-based platform designed to manage dental appointments and patient medical records. It features a student-centric dashboard for patients and a comprehensive management portal for administrators.
 
-Features
-Patient Dashboard: View upcoming appointments and full medical history.
+## Features
+- Patient Dashboard: View upcoming appointments and full medical history.
 
-Appointment System: Book, cancel, and track dental services.
+- Appointment System: Book, cancel, and track dental services.
 
-Medical Records: Admins can securely add, edit, and delete patient diagnoses and treatments.
+- Medical Records: Admins can securely add, edit, and delete patient diagnoses and treatments.
 
-Role-Based Access: Specialized views and permissions for Patients and Admins.
+- Role-Based Access: Specialized views and permissions for Patients and Admins.
 
-Prerequisites
+##  Prerequisites
 
 To run this project easily, we recommend using Laragon, which bundles the necessary tools (PHP, MySQL, Web Server).
-
-Laragon
 
 Node.js & NPM (Usually included in Laragon, but ensure you have a recent version installed)
 
