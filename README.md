@@ -92,6 +92,10 @@ Populate the database with the necessary tables and test data.
 php artisan migrate --seed
 ```
 
+If the test data aren't showing up from the database seeder, run this:
+```bash
+php artisan db:seed --class=DatabaseSeeder
+```
 ## 7. Compile Assets
 Build the frontend assets (CSS/JS).
 ```
