@@ -96,7 +96,7 @@ php artisan migrate --seed
 Build the frontend assets (CSS/JS).
 ```
 npm run dev
-
+npm run build
 ```
 
 ## 8. Start the Queue Worker
